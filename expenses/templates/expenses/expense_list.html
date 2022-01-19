@@ -1,59 +1,114 @@
 {% extends "base.html" %}
-
+{% load sorting_tags %}
 {% block content %}
 
-<a href="{% url 'expenses:expense-create' %}">add</a>
 
 <form method="get" action="">
   {{form.as_p}}
-  <button type="submit">search</button>
+  <button type="submit">Search</button>
 </form>
+<form method="get" action="">
+  {{category_form.as_p}}
+  <button type="submit">Search</button>
+</form>
+
+<form method="get" action="">
+  {{amount_form.as_p}}
+  <button type="submit">Search</button>
+</form>
+
+    <p>Search by specific date</p>
+<form method="get" action="">
+  {{date_specific.as_p}}
+  <button type="submit">Search</button>
+</form>
+
+<p>Search by range</p>
+
+
+
+<form method="GET" action="">
+    <label>
+        <input type="date" name="fromdate">
+    </label>
+    <label>
+        <input type="date" name="todate">
+    </label>
+
+    <button type="submit">Search</button>
+</form>
+
+
+
 <br>
-<table border="1">
+
+<table border="1" class="sortable" id="table" >
+
 	<caption>Expenses</caption>
 	<thead>
+
 	  <tr>
-		<th>no.</th>
-		<th>category</th>
-		<th>name</th>
-		<th>amount</th>
-		<th>date</th>
-		<th>actions</th>
+		<th scope="col"> no. </th>
+		<th scope = "col">category</th>
+		<th scope = "col">name</th>
+		<th scope = "col">amount</th>
+		<th scope = "col">date</th>
+		<th scope = "col">actions</th>
 	  </tr>
 	</thead>
 	<tbody>
 
 	{% for obj in object_list %}
-	  <tr>
-		<td>{{ page_obj.start_index|add:forloop.counter0 }}.</td>
-		<td>{{ obj.category|default:"-" }}</td>
-		<td>{{ obj.name|default:"-" }}</td>
-		<td>{{ obj.amount|floatformat:2 }}</td>
-		<td>{{obj.date}}</td>
-		<td>
-		  <a href="{% url 'expenses:expense-edit' obj.id %}">edit</a>
-		  <a href="{% url 'expenses:expense-delete' obj.id %}">delete</a>
-		</td>
-	  </tr>
-	  {% empty %}
-	  <tr>
-		<td colspan="5">no items</td>
-	  </tr>
-	{% endfor %}
+	    <tr>
+		    <td>{{ page_obj.start_index|add:forloop.counter0 }}.</td>
+		    <td>{{ obj.category|default:"-" }}</td>
+		    <td>{{ obj.name|default:"-" }}</td>
+		    <td>{{ obj.amount|floatformat:2 }}</td>
+		    <td>{{obj.date}}</td>
+
+		    <td>
+		        <a href="{% url 'expenses:expense-edit' obj.id %}">edit</a>
+		        <a href="{% url 'expenses:expense-delete' obj.id %}">delete</a>
+		    </td>
+	    </tr>
+	        {% empty %}
+	    <tr>
+
+          <td colspan="5">no items</td>
+	    </tr>
+	        {% endfor %}
+
 	</tbody>
+        <tr>
+            {% for amount, total in summary_per_id.items %}
+            <tr>
+            <td>Total amount spent	</td>
+            <td>{{total|floatformat:2}}</td>
+	    </tr>
+	        {% endfor %}
+
+
+
 </table>
+
+    <!--- Sorting table library --->
+    <link href="https://tofsjonas.github.io/sortable/sortable.css" rel="stylesheet" />
+<script src="https://tofsjonas.github.io/sortable/sortable.js"></script>
+
 
 {% include "_pagination.html" %}
 <hr>
 <table border="1">
   <caption>Summary per category</caption>
   <tr>
-    {% for category, total in summary_per_category.items %}
+    {% for name, total in summary_per_category.items %}
 	<tr>
-		<td>{{category}}:</td>
+		<td>{{name}}:</td>
 		<td>{{total|floatformat:2}}</td>
 	</tr>
 	{% endfor %}
+
   </tr>
 </table>
+
 {% endblock %}

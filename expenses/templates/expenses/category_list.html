@@ -7,6 +7,8 @@
 	<thead>
 		<tr>
 			<th>name</th>
+            		<th scope = "col">amount</th>
+
 			<th>actions</th>
 		</tr>
 	</thead>
@@ -15,6 +17,8 @@
 		<tr>
 			<td>
 				{{obj.name}}
+            <td>{{ obj.amount|floatformat:2 }}</td>
+
 			</td>
 			<td>
 				<a href="{% url 'expenses:category-delete' obj.id %}">delete</a>
